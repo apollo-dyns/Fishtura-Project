@@ -1,0 +1,25 @@
+# Używamy oficjalnego obrazu .NET SDK
+FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
+WORKDIR /app
+EXPOSE 80
+
+# Używamy obrazu SDK do budowy aplikacji
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+WORKDIR /src
+# Tworzymy pusty plik .csproj, aby kontener się uruchomił
+RUN echo "using System; namespace BackendWZ { class Program { static void Main() { Console.WriteLine(\"Hello World\"); } } }" > BackendWZ.csproj
+RUN echo "BackendWZ" > BackendWZ.csproj
+RUN dotnet new console -n BackendWZ
+WORKDIR /src/BackendWZ
+
+# Budujemy aplikację
+RUN dotnet build
+
+FROM build AS publish
+# Publikujemy aplikację
+RUN dotnet publish -c Release -o /app/publish
+
+FROM base AS final
+WORKDIR /app
+COPY --from=publish /app/publish .
+ENTRYPOINT ["dotnet", "BackendWZ.dll"]

@@ -1,0 +1,36 @@
+# Używamy obrazu bazowego ASP.NET
+FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
+WORKDIR /app
+EXPOSE 80
+
+# Używamy obrazu SDK do kompilacji aplikacji
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+WORKDIR /src
+
+# Zakomentuj lub usuń te linie, które odnoszą się do pliku .csproj
+# COPY ["Backend/Backend.csproj", "Backend/"]
+# RUN dotnet restore "Backend/Backend.csproj"
+
+# Kopiowanie wszystkich plików do kontenera (możesz dodać pliki później)
+COPY . .
+
+# Zakomentuj lub usuń te linie, które odnoszą się do budowania aplikacji
+# WORKDIR "/src/Backend"
+# RUN dotnet build "Backend.csproj" -c Release -o /app/build
+
+# Zakomentuj lub usuń te linie, które odnoszą się do publikacji aplikacji
+# FROM build AS publish
+# RUN dotnet publish "Backend.csproj" -c Release -o /app/publish
+
+# Używamy obrazu bazowego
+FROM base AS final
+WORKDIR /app
+
+# Skopiuj pliki z poprzedniego kroku (na razie nie ma aplikacji, więc ta linia będzie pusta)
+# COPY --from=publish /app/publish .
+
+# Zakomentuj lub usuń, ponieważ aplikacja nie jest jeszcze zbudowana
+# ENTRYPOINT ["dotnet", "Backend.dll"]
+
+# Na razie wyświetl tylko komunikat
+ENTRYPOINT ["echo", "Backend kontener uruchomiony, brak aplikacji."]
