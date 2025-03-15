@@ -1,0 +1,27 @@
+name: Deploy to Server
+
+on:
+  push:
+    branches:
+      - main  # Uruchomi workflow tylko przy pushu do gałęzi main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-termianl  # Wykonaj na maszynie wirtualnej Ubuntu
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3  # Sklonowanie repozytorium na maszynie wirtualnej
+
+      - name: Set up SSH key
+        run: |
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > /tmp/id_rsa  # Wczytaj klucz SSH z GitHub Secrets
+          chmod 600 /tmp/id_rsa  # Ustaw odpowiednie uprawnienia dla klucza
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}  # Wczytanie zmiennej z GitHub Secrets
+
+      - name: Copy code to server and deploy
+        run: |
+          ssh -i /tmp/id_rsa -o StrictHostKeyChecking=no user@your-server-ip 'bash -s' < ./deploy.sh
+        env:
+          DEPLOYMENT_PATH: "/volume1/docker/fishtura"  # Ścieżka do katalogu na serwerze
+
