@@ -1,0 +1,31 @@
+version: '3.8'
+
+services:
+  fakturaservice:
+    build:
+      context: .
+      dockerfile: src/BusinessServices/FakturaServices/FakturaService/Dockerfile
+    ports:
+      - "7002:7000"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+
+  paragonservice:
+    build:
+      context: .
+      dockerfile: src/BusinessServices/ParagonServices/ParagonService/Dockerfile
+    ports:
+      - "7003:7000"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+
+  database:
+    image: postgres:13
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: database_name
+    volumes:
+      - ./src/Database:/docker-entrypoint-initdb.d
+    ports:
+      - "5433:5432"
