@@ -1,0 +1,6 @@
+@ParagonService_HostAddress = http://localhost:5075
+
+GET {{ParagonService_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
